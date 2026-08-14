@@ -24,9 +24,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "key.h"
 #include "stdio.h"
+#include "key.h"
 #include "servo.h"
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,8 +98,17 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_TIM6_Init();
+  MX_TIM3_Init();
+  MX_TIM9_Init();
+  MX_TIM10_Init();
+  MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
 	servo_init();
+	motor_init();
+//	front_right_set_speed(1, 60);
+//	right_rear_set_speed(1, 60);
+//	rear_left_set_speed(0, 60);
+	front_left_set_speed(1, 60);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,29 +116,29 @@ int main(void)
   while (1)
   {
 		key_proc();
-		servo_set(0,0);
-		HAL_Delay(300);
-		servo_set(0,45);
-		HAL_Delay(300);
-		servo_set(0,90);
-		HAL_Delay(300);
-		servo_set(0,135);
-		HAL_Delay(300);
-		servo_set(0,180);
-		HAL_Delay(300);
-		servo_set(0,90);
-		
-		servo_set(1,0);
-		HAL_Delay(300);
-		servo_set(1,45);
-		HAL_Delay(300);
-		servo_set(1,90);
-		HAL_Delay(300);
-		servo_set(1,135);
-		HAL_Delay(300);
-		servo_set(1,180);
-		HAL_Delay(300);
-		servo_set(1,90);
+//		servo_set(0,0);
+//		HAL_Delay(300);
+//		servo_set(0,45);
+//		HAL_Delay(300);
+//		servo_set(0,90);
+//		HAL_Delay(300);
+//		servo_set(0,135);
+//		HAL_Delay(300);
+//		servo_set(0,180);
+//		HAL_Delay(300);
+//		servo_set(0,90);
+//		
+//		servo_set(1,0);
+//		HAL_Delay(300);
+//		servo_set(1,45);
+//		HAL_Delay(300);
+//		servo_set(1,90);
+//		HAL_Delay(300);
+//		servo_set(1,135);
+//		HAL_Delay(300);
+//		servo_set(1,180);
+//		HAL_Delay(300);
+//		servo_set(1,90);
 
     /* USER CODE END WHILE */
 
