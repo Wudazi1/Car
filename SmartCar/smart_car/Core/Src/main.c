@@ -106,17 +106,29 @@ int main(void)
   while (1)
   {
 		key_proc();
-		servo_set(0);
+		servo_set(0,0);
 		HAL_Delay(300);
-		servo_set(45);
+		servo_set(0,45);
 		HAL_Delay(300);
-		servo_set(90);
+		servo_set(0,90);
 		HAL_Delay(300);
-		servo_set(135);
+		servo_set(0,135);
 		HAL_Delay(300);
-		servo_set(180);
+		servo_set(0,180);
 		HAL_Delay(300);
-		servo_set(90);
+		servo_set(0,90);
+		
+		servo_set(1,0);
+		HAL_Delay(300);
+		servo_set(1,45);
+		HAL_Delay(300);
+		servo_set(1,90);
+		HAL_Delay(300);
+		servo_set(1,135);
+		HAL_Delay(300);
+		servo_set(1,180);
+		HAL_Delay(300);
+		servo_set(1,90);
 
     /* USER CODE END WHILE */
 

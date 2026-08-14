@@ -4,7 +4,7 @@
 #include "tim.h"
 #include "gpio.h"
 
-void servo_set(uint16_t angle);
+void servo_set(int dir,uint16_t angle);
 void servo_init(void);
 
 #endif

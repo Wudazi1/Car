@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BACK_TURN_SERVO_Pin GPIO_PIN_5
+#define BACK_TURN_SERVO_GPIO_Port GPIOE
+#define FRONT_TURN_SERVO_Pin GPIO_PIN_6
+#define FRONT_TURN_SERVO_GPIO_Port GPIOE
 #define KEY_0_Pin GPIO_PIN_3
 #define KEY_0_GPIO_Port GPIOD
 #define KEY_1_Pin GPIO_PIN_4
