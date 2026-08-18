@@ -28,6 +28,7 @@
 #include "key.h"
 #include "servo.h"
 #include "motor.h"
+#include "encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,13 +103,18 @@ int main(void)
   MX_TIM9_Init();
   MX_TIM10_Init();
   MX_TIM11_Init();
+  MX_TIM4_Init();
+  MX_TIM2_Init();
+  MX_TIM5_Init();
+  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
 	servo_init();
 	motor_init();
+	encoder_init();
 //	front_right_set_speed(1, 60);
-//	right_rear_set_speed(1, 60);
-//	rear_left_set_speed(0, 60);
-	front_left_set_speed(1, 60);
+//	rear_right_set_speed(1, 60);
+	rear_left_set_speed(0, 100);
+//	front_left_set_speed(1, 60);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,6 +122,18 @@ int main(void)
   while (1)
   {
 		key_proc();
+		int rpm1 = encoder1_getrpm_smooth();
+		printf("rpm1 = %d\r\n", rpm1);
+		HAL_Delay(30);
+		int rpm2 = encoder2_getrpm_smooth();
+		printf("rpm2 = %d\r\n", rpm2);
+		HAL_Delay(30);
+		int rpm3 = encoder3_getrpm_smooth();
+		printf("rpm3 = %d\r\n", rpm3);
+		HAL_Delay(30);
+		int rpm4 = encoder4_getrpm_smooth();
+		printf("rpm4 = %d\r\n", rpm4);
+		HAL_Delay(30);
 //		servo_set(0,0);
 //		HAL_Delay(300);
 //		servo_set(0,45);

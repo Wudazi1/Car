@@ -799,6 +799,16 @@
               <FileType>5</FileType>
               <FilePath>..\APP\motor.h</FilePath>
             </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\encoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>encoder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\encoder.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
