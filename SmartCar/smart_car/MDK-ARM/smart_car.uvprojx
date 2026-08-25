@@ -809,6 +809,16 @@
               <FileType>5</FileType>
               <FilePath>..\APP\encoder.h</FilePath>
             </File>
+            <File>
+              <FileName>pid.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\pid.h</FilePath>
+            </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\pid.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
