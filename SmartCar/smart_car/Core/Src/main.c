@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -30,6 +31,7 @@
 #include "motor.h"
 #include "encoder.h"
 #include "pid.h"
+#include "ws2812.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,6 +100,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_TIM6_Init();
   MX_TIM3_Init();
@@ -108,6 +111,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM5_Init();
   MX_TIM8_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 	extern int16_t target_rpm[4];
 	
@@ -131,8 +135,12 @@ int main(void)
   while (1)
   {
 		key_proc();
-		pid_proc();
-		HAL_Delay(10);
+//		pid_proc();
+//		HAL_Delay(10);
+			breathLight(0, 27, 100, 100, 100, pwm_data_frontled);
+			flow_from_middle(100, 100, 100, pwm_data_frontled);
+//		breathLight(0, 27, 100, 100, 100, pwm_data_rearled);
+//		flow_from_middle(100, 100, 100, pwm_data_rearled);
 
     /* USER CODE END WHILE */
 
