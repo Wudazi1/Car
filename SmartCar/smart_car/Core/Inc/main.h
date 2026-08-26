@@ -61,6 +61,10 @@ void Error_Handler(void);
 #define BACK_TURN_SERVO_GPIO_Port GPIOE
 #define FRONT_TURN_SERVO_Pin GPIO_PIN_6
 #define FRONT_TURN_SERVO_GPIO_Port GPIOE
+#define OLED_I2C_SCL_Pin GPIO_PIN_10
+#define OLED_I2C_SCL_GPIO_Port GPIOD
+#define OLED_I2C_SDA_Pin GPIO_PIN_11
+#define OLED_I2C_SDA_GPIO_Port GPIOD
 #define KEY_0_Pin GPIO_PIN_3
 #define KEY_0_GPIO_Port GPIOD
 #define KEY_1_Pin GPIO_PIN_4

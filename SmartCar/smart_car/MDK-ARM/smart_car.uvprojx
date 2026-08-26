@@ -81,7 +81,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
-            <RunUserProg2>1</RunUserProg2>
+            <RunUserProg2>0</RunUserProg2>
             <UserProg1Name></UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../APP</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../APP;..\OLED_Driver;..\COM</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -884,6 +884,56 @@
               <FileName>ws2812.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\APP\ws2812.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>OLED_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>emotion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\OLED_Driver\emotion.c</FilePath>
+            </File>
+            <File>
+              <FileName>emotion.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\OLED_Driver\emotion.h</FilePath>
+            </File>
+            <File>
+              <FileName>oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\OLED_Driver\oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\OLED_Driver\oled.h</FilePath>
+            </File>
+            <File>
+              <FileName>oledfont.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\OLED_Driver\oledfont.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>COM</GroupName>
+          <Files>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\COM\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\COM\delay.h</FilePath>
+            </File>
+            <File>
+              <FileName>system_bsp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\COM\system_bsp.h</FilePath>
             </File>
           </Files>
         </Group>

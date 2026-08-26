@@ -32,6 +32,7 @@
 #include "encoder.h"
 #include "pid.h"
 #include "ws2812.h"
+#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -122,6 +123,8 @@ int main(void)
 	servo_init();
 	motor_init();
 	encoder_init();
+	OLED_Init();
+	OLED_Clear();
 	
 //	front_right_set_speed(0,100);
 //	front_left_set_speed(0,100);
@@ -139,6 +142,7 @@ int main(void)
 //		HAL_Delay(10);
 			breathLight(0, 27, 100, 100, 100, pwm_data_frontled);
 			flow_from_middle(100, 100, 100, pwm_data_frontled);
+		  OLED_ShowChar(0,0,'a');
 //		breathLight(0, 27, 100, 100, 100, pwm_data_rearled);
 //		flow_from_middle(100, 100, 100, pwm_data_rearled);
 
