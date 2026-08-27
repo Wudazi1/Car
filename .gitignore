@@ -1,14 +1,17 @@
 # Keil MDK-ARM 编译产物（每次编译都会重新生成，不应入库）
-MDK-ARM/smart_car/
-MDK-ARM/Listings/
-MDK-ARM/*.lst
+SmartCar/smart_car/MDK-ARM/smart_car/
+SmartCar/smart_car/MDK-ARM/Listings/
+SmartCar/smart_car/MDK-ARM/*.lst
 
 # Keil 界面状态（窗口布局/折叠状态，本地个性化，不应入库）
 *.uvguix.*
 *.uvoptx
 
 # Keil RTE 自动生成文件
-MDK-ARM/RTE/
+SmartCar/smart_car/MDK-ARM/RTE/
+
+# Keil 调试配置（自动生成，无需跟踪）
+SmartCar/smart_car/MDK-ARM/DebugConfig/
 
 # Keil 其他生成文件
 *.scvd
