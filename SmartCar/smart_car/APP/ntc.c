@@ -60,10 +60,16 @@ int ntc_value = 0;
 float ntc_voltage = 0.0f;
 float ntc_resistance = 0.0f;
 float temperature = 0.0f;
+char temperture_buf[16];
+
 void temperature_proc(void)
 {
-    ntc_value = getMiddleValue(&hadc1, 7);
-    ntc_voltage = (ntc_value / 4095.0f) * 3.3f;
-    ntc_resistance = calculate_ntc_resistance(ntc_voltage);
-    temperature = calculate_temperature(ntc_resistance);
+		ntc_value = getMiddleValue(&hadc1, 7);
+		ntc_voltage = (ntc_value / 4095.0f) * 3.3f;
+		ntc_resistance = calculate_ntc_resistance(ntc_voltage);
+		temperature = calculate_temperature(ntc_resistance);
+
+		// 显示电压
+		sprintf(temperture_buf, "temperature:%.1f", temperature);
+		OLED_ShowString(0,1, temperture_buf);
 }

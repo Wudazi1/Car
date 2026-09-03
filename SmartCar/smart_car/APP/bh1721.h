@@ -4,7 +4,7 @@
 #include "system_bsp.h"
 
 #define BH1721_ADDR      0x23    // 7位设备地址
-#define BH1721_I2C_DELAY 5       // 微秒延时（与OLED共用同一I2C总线）
+#define BH1721_I2C_DELAY 1000       // 微秒延时（与OLED共用同一I2C总线）
 
 // BH1721 软件I2C对象（与OLED共用PD10/PD11）
 extern Soft_I2C_t bh1721_i2c;

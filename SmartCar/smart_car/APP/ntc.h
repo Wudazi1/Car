@@ -3,4 +3,7 @@
 
 #include "adc.h"
 
+void NTC_ADC_Init(void);
+void temperature_proc(void);
+
 #endif

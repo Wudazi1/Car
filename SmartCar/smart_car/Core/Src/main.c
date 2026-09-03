@@ -35,6 +35,9 @@
 #include "ws2812.h"
 #include "oled.h"
 #include "battery.h"
+#include "ntc.h"
+#include "bh1721.h"
+#include "delay.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -129,6 +132,10 @@ int main(void)
 	ADC_init();
 	OLED_Init();
 	OLED_Clear();
+	NTC_ADC_Init();
+	DWT_Init();
+	BH1721_Init();
+	char displayStr[16]; 
 	
 //	front_right_set_speed(0,100);
 //	front_left_set_speed(0,100);
@@ -143,9 +150,16 @@ int main(void)
   {
 		key_proc();
 //		pid_proc();
-		breathLight(0, 27, 100, 100, 100, pwm_data_frontled);
+//		breathLight(0, 27, 100, 100, 100, pwm_data_frontled);
 //			flow_from_middle(100, 100, 100, pwm_data_rearled);
-		  adc_proc();
+//		adc_proc();
+//		HAL_Delay(100);
+//		temperature_proc();
+
+		uint16_t light_data = BH1721_ReadData();
+    sprintf(displayStr, "Cd: %dLux", light_data);
+		printf("Light intensity: %d lux\r\n", light_data);
+		OLED_ShowString(0, 1, displayStr);
 //		breathLight(0, 27, 100, 100, 100, pwm_data_rearled);
 //		flow_from_middle(100, 100, 100, pwm_data_rearled);
 

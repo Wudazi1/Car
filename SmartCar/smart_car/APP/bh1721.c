@@ -42,8 +42,8 @@ uint16_t BH1721_ReadData(void)
         return 0xFFFF;
     }
 
-    uint8_t msb = Soft_I2C_ReadByte(&bh1721_i2c, 0, BH1721_I2C_DELAY);    // 带ACK读取MSB
-    uint8_t lsb = Soft_I2C_ReadByte(&bh1721_i2c, 1, BH1721_I2C_DELAY);    // 带NACK读取LSB
+    uint8_t msb = Soft_I2C_ReadByte(&bh1721_i2c, 1, BH1721_I2C_DELAY);    // 带ACK读取MSB (ack=1)
+    uint8_t lsb = Soft_I2C_ReadByte(&bh1721_i2c, 0, BH1721_I2C_DELAY);    // 带NACK读取LSB (ack=0)
     Soft_I2C_Stop(&bh1721_i2c, BH1721_I2C_DELAY);
 
     return (msb << 8) | lsb;
