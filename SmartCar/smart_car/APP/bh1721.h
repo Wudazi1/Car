@@ -3,18 +3,13 @@
 
 #include "system_bsp.h"
 
-#define BH1721_ADDR     0x23    // 7位设备地址
+#define BH1721_ADDR      0x23    // 7位设备地址
+#define BH1721_I2C_DELAY 5       // 微秒延时（与OLED共用同一I2C总线）
 
-// 软件I2C引脚定义
-#define I2C_PORT GPIOD
-#define SCL_PIN GPIO_PIN_10
-#define SDA_PIN GPIO_PIN_11
+// BH1721 软件I2C对象（与OLED共用PD10/PD11）
+extern Soft_I2C_t bh1721_i2c;
 
 // 函数声明
-void SoftI2C_Start(void);
-void SoftI2C_Stop(void);
-uint8_t SoftI2C_WriteByte(uint8_t data);
-uint8_t SoftI2C_ReadByte(uint8_t ack);
 void BH1721_Init(void);
 uint16_t BH1721_ReadData(void);
 

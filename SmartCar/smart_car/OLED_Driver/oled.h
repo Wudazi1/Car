@@ -1,7 +1,9 @@
 #ifndef __OLED_H
 #define __OLED_H
 
-#include "system_bsp.h" 
+#include "system_bsp.h"
+
+#define OLED_I2C_DELAY_US  5  // I2C延时（微秒） 
 
 extern const uint8_t pic[];
 

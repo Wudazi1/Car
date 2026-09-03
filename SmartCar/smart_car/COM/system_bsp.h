@@ -11,6 +11,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "stdarg.h" 
+#include "soft_i2c.h"
 #include "math.h"
 #include "delay.h"
 #include "oled.h"
