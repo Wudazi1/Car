@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define EEPEOM_I2C_SCL_Pin GPIO_PIN_3
+#define EEPEOM_I2C_SCL_GPIO_Port GPIOE
+#define EEPROM_I2C_SDA_Pin GPIO_PIN_4
+#define EEPROM_I2C_SDA_GPIO_Port GPIOE
 #define BACK_TURN_SERVO_Pin GPIO_PIN_5
 #define BACK_TURN_SERVO_GPIO_Port GPIOE
 #define FRONT_TURN_SERVO_Pin GPIO_PIN_6
