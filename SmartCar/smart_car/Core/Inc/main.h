@@ -75,6 +75,10 @@ void Error_Handler(void);
 #define KEY_1_GPIO_Port GPIOD
 #define BOTTOM_LED_Pin GPIO_PIN_7
 #define BOTTOM_LED_GPIO_Port GPIOD
+#define MPU6050_SCL_Pin GPIO_PIN_0
+#define MPU6050_SCL_GPIO_Port GPIOE
+#define MPU6050_SDA_Pin GPIO_PIN_1
+#define MPU6050_SDA_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 

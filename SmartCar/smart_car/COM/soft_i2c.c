@@ -147,6 +147,35 @@ uint8_t Soft_I2C_ReadByte(Soft_I2C_t *soft_i2c, uint8_t ack, uint32_t delay_us)
     } else {
         Soft_I2C_NAck(soft_i2c, delay_us);   // NACK：停止读
     }
-    
+
     return data;
+}
+
+// ==================== 寄存器读写封装 ==================== //
+
+// 写寄存器：Start → Write(设备地址) → Write(寄存器) → Write(数据) → Stop
+void Soft_I2C_WriteRegister(Soft_I2C_t *soft_i2c, uint8_t dev_addr, uint8_t reg_addr, uint8_t data, uint32_t delay_us)
+{
+    Soft_I2C_Start(soft_i2c, delay_us);
+    Soft_I2C_WriteByte(soft_i2c, dev_addr << 1, delay_us);     // 写地址
+    Soft_I2C_WriteByte(soft_i2c, reg_addr, delay_us);          // 寄存器地址
+    Soft_I2C_WriteByte(soft_i2c, data, delay_us);             // 写入数据
+    Soft_I2C_Stop(soft_i2c, delay_us);
+}
+
+// 读多个寄存器：Start → Write(设备地址) → Write(寄存器) → Repeated Start → Write(设备地址|读) → Read(N-1次ACK) → Read(最后1次NACK) → Stop
+void Soft_I2C_ReadRegisters(Soft_I2C_t *soft_i2c, uint8_t dev_addr, uint8_t reg_addr, uint8_t *receive_buff, uint8_t size, uint32_t delay_us)
+{
+    Soft_I2C_Start(soft_i2c, delay_us);
+    Soft_I2C_WriteByte(soft_i2c, dev_addr << 1, delay_us);         // 写地址
+    Soft_I2C_WriteByte(soft_i2c, reg_addr, delay_us);              // 寄存器地址
+    Soft_I2C_Start(soft_i2c, delay_us);                            // Repeated Start
+    Soft_I2C_WriteByte(soft_i2c, (dev_addr << 1) | 0x01, delay_us); // 读地址
+
+    for(uint8_t i = 0; i < size - 1; i++)
+    {
+        receive_buff[i] = Soft_I2C_ReadByte(soft_i2c, 1, delay_us);  // ACK：继续读
+    }
+    receive_buff[size - 1] = Soft_I2C_ReadByte(soft_i2c, 0, delay_us); // NACK：停止读
+    Soft_I2C_Stop(soft_i2c, delay_us);
 }
