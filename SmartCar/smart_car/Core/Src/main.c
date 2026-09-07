@@ -38,6 +38,8 @@
 #include "ntc.h"
 #include "bh1721.h"
 #include "delay.h"
+#include "eeprom.h"
+#include "mpu6050.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -70,6 +72,8 @@ int fputc(int ch, FILE *str)
 	HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 10);
 	return ch;
 }
+
+uint8_t totalDistance = 10;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -135,7 +139,7 @@ int main(void)
 	NTC_ADC_Init();
 	DWT_Init();
 	BH1721_Init();
-	char displayStr[16]; 
+	mpu6050_init();
 	
 //	front_right_set_speed(0,100);
 //	front_left_set_speed(0,100);
@@ -148,18 +152,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		key_proc();
+		mpu6050_proc();
+//		sprintf(displaybuf, "BOOT:%-3d", totalDistance);
+//    OLED_ShowString(0, 1, displaybuf);
+//		key_proc();
 //		pid_proc();
 //		breathLight(0, 27, 100, 100, 100, pwm_data_frontled);
-//			flow_from_middle(100, 100, 100, pwm_data_rearled);
+//		flow_from_middle(100, 100, 100, pwm_data_rearled);
 //		adc_proc();
 //		HAL_Delay(100);
 //		temperature_proc();
 
-		uint16_t light_data = BH1721_ReadData();
-    sprintf(displayStr, "Cd: %dLux", light_data);
-		printf("Light intensity: %d lux\r\n", light_data);
-		OLED_ShowString(0, 1, displayStr);
+//		uint16_t light_data = BH1721_ReadData();
+//    sprintf(displayStr, "Cd: %dLux", light_data);
+//		printf("Light intensity: %d lux\r\n", light_data);
+//		OLED_ShowString(0, 1, displayStr);
 //		breathLight(0, 27, 100, 100, 100, pwm_data_rearled);
 //		flow_from_middle(100, 100, 100, pwm_data_rearled);
 
