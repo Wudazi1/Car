@@ -20,6 +20,7 @@ extern uint16_t pwm_data_frontled[DATA_SIZE + WS2812_RST_NUM];  /* 前灯PWM数�
 extern uint16_t pwm_data_rearled[DATA_SIZE + WS2812_RST_NUM];   /* 后灯PWM数据缓冲区 */
 
 void set_led_color(int led_index, uint8_t red, uint8_t green, uint8_t blue, uint16_t pwm_data[]);
+void set_multiple_leds(uint8_t start_index, uint8_t end_index, uint8_t red, uint8_t green, uint8_t blue, uint16_t pwm_data[]);
 void flowLight(uint8_t red, uint8_t green, uint8_t blue, uint16_t pwm_data[]);
 void breathLight(uint8_t start_index, uint8_t end_index, uint8_t red, uint8_t green, uint8_t blue, uint16_t pwm_data[]);
 void flow_from_middle(uint8_t red, uint8_t green, uint8_t blue, uint16_t pwm_data[]) ;

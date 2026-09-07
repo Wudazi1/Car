@@ -77,6 +77,12 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : TRACK0_Pin TRACK1_Pin TRACK2_Pin TRACK3_Pin */
+  GPIO_InitStruct.Pin = TRACK0_Pin|TRACK1_Pin|TRACK2_Pin|TRACK3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
   /*Configure GPIO pins : OLED_BH1721_SOFT_SCL_Pin OLED_BH1721_SOFT_SDA_Pin */
   GPIO_InitStruct.Pin = OLED_BH1721_SOFT_SCL_Pin|OLED_BH1721_SOFT_SDA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
