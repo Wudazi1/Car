@@ -26,6 +26,7 @@ typedef struct
 {
 	float roll;     // 横滚角 (X轴) 单位：度
 	float pitch;    // 俯仰角 (Y轴) 单位：度
+	float yaw;      // 偏航角 (Z轴) 单位：度
 } Angles_t;
 
 typedef struct

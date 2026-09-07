@@ -1093,6 +1093,26 @@
               <FileType>5</FileType>
               <FilePath>..\APP\eeprom.h</FilePath>
             </File>
+            <File>
+              <FileName>mpu6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\mpu6050.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpu6050.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\mpu6050.h</FilePath>
+            </File>
+            <File>
+              <FileName>track.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\track.c</FilePath>
+            </File>
+            <File>
+              <FileName>track.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\track.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

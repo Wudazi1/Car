@@ -1,4 +1,5 @@
 #include "mpu6050.h"
+#include "delay.h"
 
 // ==================== 全局变量定义 ==================== //
 int16_t ax_raw, ay_raw, az_raw;  // 加速度原始数据
@@ -27,6 +28,143 @@ static float pitch_angle = 0.0f;  // 互补滤波输出的俯仰角
 
 // 漂移抑制相关
 static uint32_t last_online_bias_update = 0;
+
+// 调试相关
+static uint8_t angle_print_enabled = 0;
+static uint32_t print_counter = 0;
+
+// 滤波输出
+float roll_filtered = 0, pitch_filtered = 0.0f;
+
+// Madgwick滤波器相关
+static float beta_madgwick = 0.1f;
+static float q0 = 1.0f, q1 = 0, q2 = 0, q3 = 0;
+
+// copysign函数
+#ifndef copysign
+static float my_copysign(float x, float y) {
+    return (y >= 0.0f) ? fabsf(x) : -fabsf(x);
+}
+#define copysign my_copysign
+#endif
+
+// ==================== Madgwick算法函数 ==================== //
+/**
+  * @brief  Madgwick AHRS算法（6轴版本）
+  */
+static void MadgwickAHRSupdateIMU(float gx, float gy, float gz, float ax, float ay, float az, float delta_t)
+{
+    float recipNorm;
+    float s0, s1, s2, s3;
+    float qDot1, qDot2, qDot3, qDot4;
+    float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2, _8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
+
+    // 加速度计归一化
+    recipNorm = 1.0f / sqrtf(ax * ax + ay * ay + az * az);
+    ax *= recipNorm;
+    ay *= recipNorm;
+    az *= recipNorm;
+
+    // 四元数微分方程
+    qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
+    qDot2 = 0.5f * (q0 * gx + q2 * gz - q3 * gy);
+    qDot3 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);
+    qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
+
+    // 计算雅可比矩阵
+    _2q0 = 2.0f * q0;
+    _2q1 = 2.0f * q1;
+    _2q2 = 2.0f * q2;
+    _2q3 = 2.0f * q3;
+    _4q0 = 4.0f * q0;
+    _4q1 = 4.0f * q1;
+    _4q2 = 4.0f * q2;
+    _8q1 = 8.0f * q1;
+    _8q2 = 8.0f * q2;
+    q0q0 = q0 * q0;
+    q1q1 = q1 * q1;
+    q2q2 = q2 * q2;
+    q3q3 = q3 * q3;
+
+    // 梯度下降算法校正
+    s0 = _4q0 * q2q2 + _2q2 * ax + _4q0 * q1q1 - _2q1 * ay;
+    s1 = _4q1 * q3q3 - _2q3 * ax + 4.0f * q0q0 * q1 - _2q0 * ay - _4q1 + _8q1 * q1q1 + _8q1 * q2q2 + _4q1 * az;
+    s2 = 4.0f * q0q0 * q2 + _2q0 * ax + _4q2 * q3q3 - _2q3 * ay - _4q2 + _8q2 * q1q1 + _8q2 * q2q2 + _4q2 * az;
+    s3 = 4.0f * q1q1 * q3 - _2q1 * ax + 4.0f * q2q2 * q3 - _2q2 * ay;
+
+    recipNorm = 1.0f / sqrtf(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3);
+    s0 *= recipNorm;
+    s1 *= recipNorm;
+    s2 *= recipNorm;
+    s3 *= recipNorm;
+
+    // 应用反馈校正
+    qDot1 -= beta_madgwick * s0;
+    qDot2 -= beta_madgwick * s1;
+    qDot3 -= beta_madgwick * s2;
+    qDot4 -= beta_madgwick * s3;
+
+    // 积分
+    q0 += qDot1 * delta_t;
+    q1 += qDot2 * delta_t;
+    q2 += qDot3 * delta_t;
+    q3 += qDot4 * delta_t;
+
+    // 归一化
+    recipNorm = 1.0f / sqrtf(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+    q0 *= recipNorm;
+    q1 *= recipNorm;
+    q2 *= recipNorm;
+    q3 *= recipNorm;
+
+    quat.q0 = q0;
+    quat.q1 = q1;
+    quat.q2 = q2;
+    quat.q3 = q3;
+}
+
+/**
+  * @brief  四元数转欧拉角
+  */
+static void Quaternion_To_Euler(void)
+{
+    float q0q0 = quat.q0 * quat.q0;
+    float q0q1 = quat.q0 * quat.q1;
+    float q0q2 = quat.q0 * quat.q2;
+    float q0q3 = quat.q0 * quat.q3;
+    float q1q1 = quat.q1 * quat.q1;
+    float q1q2 = quat.q1 * quat.q2;
+    float q1q3 = quat.q1 * quat.q3;
+    float q2q2 = quat.q2 * quat.q2;
+    float q2q3 = quat.q2 * quat.q3;
+    float q3q3 = quat.q3 * quat.q3;
+
+    // 横滚角
+    float sinr_cosp = 2.0f * (q0q1 + q2q3);
+    float cosr_cosp = 1.0f - 2.0f * (q1q1 + q2q2);
+    angles.roll = atan2f(sinr_cosp, cosr_cosp) * 180.0f / M_PI;
+
+    // 俯仰角
+    float sinp = 2.0f * (q0q2 - q1q3);
+    if (fabsf(sinp) >= 1.0f) {
+        angles.pitch = copysign(M_PI / 2.0f, sinp) * 180.0f / M_PI;
+    } else {
+        angles.pitch = asinf(sinp) * 180.0f / M_PI;
+    }
+
+    // 偏航角
+    float siny_cosp = 2.0f * (q0q3 + q1q2);
+    float cosy_cosp = 1.0f - 2.0f * (q2q2 + q3q3);
+    angles.yaw = atan2f(siny_cosp, cosy_cosp) * 180.0f / M_PI;
+
+    // 限制角度范围在-180到180度之间
+    if (angles.roll > 180.0f) angles.roll -= 360.0f;
+    if (angles.roll < -180.0f) angles.roll += 360.0f;
+    if (angles.pitch > 180.0f) angles.pitch -= 360.0f;
+    if (angles.pitch < -180.0f) angles.pitch += 360.0f;
+    if (angles.yaw > 180.0f) angles.yaw -= 360.0f;
+    if (angles.yaw < -180.0f) angles.yaw += 360.0f;
+}
 
 // ==================== I2C对象定义 ==================== //
 // MPU6050 软件I2C对象（独立引脚：PE0/PE1）
@@ -81,7 +219,9 @@ void MPU6050_Calibration(void)
         gx_sum += (float)gx_raw;
         gy_sum += (float)gy_raw;
         gz_sum += (float)gz_raw;
-        if(i % 20 == 0) printf(".");
+        if(i % 10 == 0) {
+            printf("\rCalibrating: %d/%d", i, samples);
+        }
         HAL_Delay(10);
     }
     printf("\n");
@@ -106,21 +246,21 @@ void MPU6050_Calibration(void)
 // ==================== 对外接口实现 ==================== //
 void mpu6050_init(void)
 {
-    printf("Attitude estimation initialized with complementary filter.\n");
-    printf("Please keep IMU stationary for gyro calibration...\n");
+    printf("\n********************************\n");
+    printf("*       IMU Test System        *\n");
+    printf("********************************\n\n");
 
+    // 初始化DWT计数器
+    DWT_Init();
+
+    printf("MPU6050 initializing...\n");
     MPU6050_Init();
+    printf("MPU6050 init OK\n");
 
+    printf("\nCalibrating MPU6050 (keep device stationary)...\n");
     OLED_ShowString(0, 1, "Calibrating...");
     MPU6050_Calibration();
     OLED_Clear();
-//  buzzer(1);
-    HAL_Delay(200);
-//  buzzer(0);
-    HAL_Delay(100);
-//  buzzer(1);
-    HAL_Delay(100);
-//  buzzer(0);
 
     // 初始化互补滤波角度
     // 读取一次数据并计算初始角度
@@ -135,11 +275,20 @@ void mpu6050_init(void)
 
     angles.roll = roll_angle;
     angles.pitch = pitch_angle;
+    angles.yaw = 0.0f;
     roll_filtered = roll_angle;
     pitch_filtered = pitch_angle;
+
+    // 初始化四元数
+    q0 = 1.0f; q1 = 0; q2 = 0; q3 = 0;
+    quat.q0 = 1.0f;
+    quat.q1 = 0.0f;
+    quat.q2 = 0.0f;
+    quat.q3 = 0.0f;
+
+    printf("\nIMU Ready\n");
 }
 
-float roll_filtered = 0, pitch_filtered = 0.0f;
 void mpu6050_proc(void)
 {
     static uint32_t last_time = 0;
@@ -176,6 +325,8 @@ void mpu6050_proc(void)
             gyro_bias_y = (1.0f - alpha) * gyro_bias_y + alpha * gy;
             gyro_bias_z = (1.0f - alpha) * gyro_bias_z + alpha * gz;
             last_online_bias_update = current_time;
+            printf("[ZeroBias] Updated: %.4f, %.4f, %.4f °/s\n",
+                   gyro_bias_x, gyro_bias_y, gyro_bias_z);
         }
     }
 
@@ -198,6 +349,8 @@ void mpu6050_proc(void)
                 frozen_angles.roll = roll_angle;
                 frozen_angles.pitch = pitch_angle;
                 angles_frozen = 1;
+                printf("[Status] Angles frozen at Roll=%.2f, Pitch=%.2f\n",
+                       roll_angle, pitch_angle);
             }
         }
     }
@@ -207,24 +360,37 @@ void mpu6050_proc(void)
         angles_frozen = 0;
     }
 
-    // === 5. 互补滤波姿态解算 ===
+    // === 5. 互补滤波姿态解算（计算roll和pitch）===
     // 从加速度计计算角度
-    float accel_roll = atan2(ay, az) * 180.0f / M_PI;
-    float accel_pitch = atan2(-ax, sqrt(ay*ay + az*az)) * 180.0f / M_PI;
+    float accel_roll = atan2f(ay, az) * 180.0f / M_PI;
+    float accel_pitch = atan2f(-ax, sqrtf(ay*ay + az*az)) * 180.0f / M_PI;
 
     // 减小alpha，加快收敛
-    float current_alpha = 0.90f;   // 原为0.98，现改为0.90
+    float current_alpha = 0.90f;
 
     // 互补滤波公式
     roll_angle = current_alpha * (roll_angle + gx * dt) + (1.0f - current_alpha) * accel_roll;
     pitch_angle = current_alpha * (pitch_angle + gy * dt) + (1.0f - current_alpha) * accel_pitch;
 
+    // === 6. Madgwick算法计算yaw（四元数）===
+    // 转换为弧度
+    float gx_rad = gx * DEG_TO_RAD;
+    float gy_rad = gy * DEG_TO_RAD;
+    float gz_rad = gz * DEG_TO_RAD;
+
+    // Madgwick更新
+    MadgwickAHRSupdateIMU(gx_rad, gy_rad, gz_rad, ax, ay, az, dt);
+
+    // 四元数转欧拉角
+    Quaternion_To_Euler();
+
     // 静止时缓慢回归冻结值（漂移抑制）
     if(angles_frozen && stationary_count > 300)
     {
-        float beta = 0.001f;  // 回归速度
+        float beta = 0.001f;
         roll_angle = (1.0f - beta) * roll_angle + beta * frozen_angles.roll;
         pitch_angle = (1.0f - beta) * pitch_angle + beta * frozen_angles.pitch;
+        angles.yaw = (1.0f - beta) * angles.yaw + beta * frozen_angles.yaw;
     }
 
     // 更新全局角度
@@ -235,4 +401,21 @@ void mpu6050_proc(void)
     static float alpha_filter = 0.7f;
     roll_filtered = alpha_filter * roll_angle + (1.0f - alpha_filter) * roll_filtered;
     pitch_filtered = alpha_filter * pitch_angle + (1.0f - alpha_filter) * pitch_filtered;
+
+    // === 7. 调试打印（约100ms一次）===
+    print_counter++;
+    if(print_counter >= 10)
+    {
+        print_counter = 0;
+
+        // 第一次打印提示
+        if(!angle_print_enabled)
+        {
+            printf("\n=== IMU Output Start ===\n");
+            angle_print_enabled = 1;
+        }
+
+        // 打印角度 - FireWater协议格式
+        printf("%6.2f, %6.2f, %6.2f\n", angles.roll, angles.pitch, angles.yaw);
+    }
 }
