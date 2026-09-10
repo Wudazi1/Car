@@ -73,6 +73,8 @@ void Error_Handler(void);
 #define TRACK2_GPIO_Port GPIOE
 #define TRACK3_Pin GPIO_PIN_13
 #define TRACK3_GPIO_Port GPIOE
+#define SPI2_NSS_Pin GPIO_PIN_12
+#define SPI2_NSS_GPIO_Port GPIOB
 #define OLED_BH1721_SOFT_SCL_Pin GPIO_PIN_10
 #define OLED_BH1721_SOFT_SCL_GPIO_Port GPIOD
 #define OLED_BH1721_SOFT_SDA_Pin GPIO_PIN_11
