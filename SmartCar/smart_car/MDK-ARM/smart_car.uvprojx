@@ -638,6 +638,16 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\Inc\spi.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -978,6 +988,16 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>stm32f1xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_spi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1112,6 +1132,16 @@
               <FileName>track.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\APP\track.h</FilePath>
+            </File>
+            <File>
+              <FileName>ps2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\ps2.c</FilePath>
+            </File>
+            <File>
+              <FileName>ps2.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\APP\ps2.h</FilePath>
             </File>
           </Files>
         </Group>

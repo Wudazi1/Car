@@ -41,6 +41,7 @@
 #include "delay.h"
 #include "eeprom.h"
 #include "mpu6050.h"
+#include "ps2.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -134,14 +135,15 @@ int main(void)
 	target_rpm[3] = -50;
 	servo_init();
 	motor_init();
+	DWT_Init();
 	encoder_init();
 	ADC_init();
 	OLED_Init();
 	OLED_Clear();
 	NTC_ADC_Init();
-	DWT_Init();
 	BH1721_Init();
-	mpu6050_init();
+	PS2_Init();
+//	mpu6050_init();
 	
 //	front_right_set_speed(0,100);
 //	front_left_set_speed(0,100);
@@ -154,7 +156,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		mpu6050_proc();
+		ps2_proc();
+		HAL_Delay(20);
+//		mpu6050_proc();
 //		sprintf(displaybuf, "BOOT:%-3d", totalDistance);
 //    OLED_ShowString(0, 1, displaybuf);
 //		key_proc();
