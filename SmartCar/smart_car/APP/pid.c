@@ -10,14 +10,13 @@
 #include <math.h>
 
 // PID parameters(global variables)
-float pid_kp = 2.0f;
-float pid_ki = 0.3f;
-float pid_kd = 0.03f;
+float pid_kp = 100.0f;
+float pid_ki = 150.0f;
+float pid_kd = 0.0f;
 
 // optimization configurations
 #define OUTPUT_DEADZONE    10
-#define DIR_HYSTERESIS      5
-#define INTEGRAL_SEP_THRESH 100
+#define INTEGRAL_SEP_THRESH 2.0f
 #define DIFF_FILTER_ALPHA   0.1f
 
 // PID state structure
@@ -27,7 +26,6 @@ typedef struct {
     uint32_t last_pid_time;
     float last_target;
     float prev_derivative;
-    uint8_t last_direction;
 } PID_State;
 
 // Function pointer type definitions
@@ -70,8 +68,11 @@ static void motor_PID(uint8_t motor_id, float target_speed, GetSpeedFunc get_spe
     pid_state[motor_id].last_target = target_speed;
 
     // 3. read current speed and calculate error
+    // 使用绝对值计算PID，方向由target_speed符号决定
     float current_speed = get_speed();
-    float error = target_speed - current_speed;
+    float abs_target = fabsf(target_speed);
+    float abs_current = fabsf(current_speed);
+    float error = abs_target - abs_current;
 
     // 4. calculate proportional term
     float P = pid_kp * error;
@@ -89,43 +90,34 @@ static void motor_PID(uint8_t motor_id, float target_speed, GetSpeedFunc get_spe
     // 7. colculate total output and clamp
     float output = P + I + D;
     if(output > 200.0f) output = 200.0f;
-    if(output < -200.0f) output = -200.0f;
+    if(output < 0.0f) output = 0.0f;
 
-    // 8. output deadzone + direction hysteresis
-    int final_dir;
-    uint16_t final_speed;
+    // 8. output deadzone + direction
+    int final_dir = (target_speed >= 0) ? 1 : 0;
+    uint16_t final_speed = 0;
 
-    if(fabsf(output) < OUTPUT_DEADZONE)
+    if(abs_target < 0.01f)
     {
-        final_dir = pid_state[motor_id].last_direction;
+        // 目标是停止
         final_speed = 0;
+    }
+    else if(fabsf(output) < OUTPUT_DEADZONE)
+    {
+        // 速度太小，给个最小输出
+        final_speed = OUTPUT_DEADZONE;
     }
     else
     {
-        if(fabsf(output) >= DIR_HYSTERESIS)
-        {
-            uint8_t new_dir = (output >= 0) ? 1 : 0;
-            if(new_dir == pid_state[motor_id].last_direction)
-            {
-                final_dir = new_dir;
-                final_speed = (uint16_t)(fabsf(output));
-            }
-            else
-            {
-                final_dir = pid_state[motor_id].last_direction;
-                final_speed = 0;
-            }
-        }
+        final_speed = (uint16_t)(output);
     }
 
     // apply output
     set_speed(final_dir, final_speed);
-    pid_state[motor_id].last_direction = final_dir;
 
     // 9. integral accumulation
     if(fabsf(error) < INTEGRAL_SEP_THRESH)
     {
-        if(!((output >= 200.0f && error > 0) || (output <= -200.0f && error < 0)))
+        if(!(output >= 200.0f && error > 0))
         {
             pid_state[motor_id].integral += error * dt;
         }
@@ -133,11 +125,14 @@ static void motor_PID(uint8_t motor_id, float target_speed, GetSpeedFunc get_spe
 
     // 10. integral limit
     if(pid_state[motor_id].integral > 200.0f) pid_state[motor_id].integral = 200.0f;
-    if(pid_state[motor_id].integral < -200.0f) pid_state[motor_id].integral = -200.0f;
+    if(pid_state[motor_id].integral < 0.0f) pid_state[motor_id].integral = 0.0f;
 
     // 11. save state
     pid_state[motor_id].prev_error = error;
     pid_state[motor_id].last_pid_time = current_time;
+    
+    // 调试pid时VOFA看图使用
+//    printf("%d,%.2f,%.2f,%.2f\r\n", motor_id, target_speed, current_speed, output);
 }
 
 /**
