@@ -127,12 +127,6 @@ int main(void)
   MX_ADC1_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-	extern int16_t target_rpm[4];
-	
-	target_rpm[0] = -100;
-	target_rpm[1] = -50;
-	target_rpm[2] = -100;
-	target_rpm[3] = -50;
 	servo_init();
 	motor_init();
 	DWT_Init();
@@ -144,11 +138,6 @@ int main(void)
 	BH1721_Init();
 	PS2_Init();
 //	mpu6050_init();
-	
-//	front_right_set_speed(0,100);
-//	front_left_set_speed(0,100);
-//	rear_left_set_speed(1,100);
-//	rear_right_set_speed(1,100);
 
   /* USER CODE END 2 */
 
@@ -159,22 +148,8 @@ int main(void)
 		ps2_proc();
 		HAL_Delay(20);
 //		mpu6050_proc();
-//		sprintf(displaybuf, "BOOT:%-3d", totalDistance);
-//    OLED_ShowString(0, 1, displaybuf);
 //		key_proc();
-//		pid_proc();
-//		breathLight(0, 27, 100, 100, 100, pwm_data_frontled);
-//		flow_from_middle(100, 100, 100, pwm_data_rearled);
-//		adc_proc();
-//		HAL_Delay(100);
-//		temperature_proc();
-
-//		uint16_t light_data = BH1721_ReadData();
-//    sprintf(displayStr, "Cd: %dLux", light_data);
-//		printf("Light intensity: %d lux\r\n", light_data);
-//		OLED_ShowString(0, 1, displayStr);
-//		breathLight(0, 27, 100, 100, 100, pwm_data_rearled);
-//		flow_from_middle(100, 100, 100, pwm_data_rearled);
+		pid_proc();
 
     /* USER CODE END WHILE */
 

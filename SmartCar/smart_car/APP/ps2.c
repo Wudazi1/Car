@@ -348,86 +348,26 @@ void ps2_proc(void)
         uint8_t ly = Data[PSS_LY]; // 用于前进后退 0到255 中间值为127
         uint8_t rx = Data[PSS_RX]; // 用于舵机转向 0到255 中间值为128
 
-        // 电机控制
-        int16_t speed = 0;          
-        // 前进控制 (ly < 125)
-        if(ly < 125)
-        {
-            // 计算速度绝对值 (40-150)
-            uint8_t speed_abs = 0;
-            
-            if(ly < 20) 
-            {
-                // 最大速度150
-                speed_abs = 150;
-            }
-            else if(ly <= 124)
-            {
-                // 线性映射: ly从20到124，速度从150到40
-                // 公式: speed = 150 - (ly-20) * (150-40)/(124-20)
-                speed_abs = 150 - (ly - 20) * 110 / 104;
-            }
-            
-            // 限幅: 40-150
-            if(speed_abs < 40) speed_abs = 40;
-            else if(speed_abs > 150) speed_abs = 150;
-            
-            speed = speed_abs;  // 前进为正
+        // 电机控制：ly直接映射为速度m/s
+        // ly范围0-255，127是中间值停止
+        float target_speed_val = 0.0f;
+
+        if(ly < 127) {
+            // 前进：ly从127→0对应0→1.2 m/s
+            target_speed_val = (127 - ly) / 127.0f * 1.2f;
+        } else if(ly > 127) {
+            // 后退：ly从127→255对应0→-1.2 m/s
+            target_speed_val = (127 - ly) / 127.0f * 1.2f;
+        } else {
+            target_speed_val = 0.0f;
         }
-        // 后退控制 (ly > 130)
-        else if(ly > 130)
-        {
-            // 计算速度绝对值 (40-150)
-            uint8_t speed_abs = 0;
-            
-            if(ly > 235) 
-            {
-                // 最大速度150
-                speed_abs = 150;
-            }
-            else if(ly >= 131)
-            {
-                // 线性映射: ly从131到235，速度从40到150
-                // 公式: speed = 40 + (ly-131) * (150-40)/(235-131)
-                speed_abs = 40 + (ly - 131) * 110 / 104;
-            }
-            
-            // 限幅: 40-150
-            if(speed_abs < 40) speed_abs = 40;
-            else if(speed_abs > 150) speed_abs = 150;
-            
-            speed = -speed_abs;  // 后退为负
-        }
-        // 停止区 (125 <= ly <= 130)
-        else
-        {
-            speed = 0;
-        }
-        if(speed > 0)  // 前进
-        {
-            front_right_set_speed(1, speed);
-            front_left_set_speed(1, speed);
-            rear_right_set_speed(1, speed);
-            rear_left_set_speed(1, speed);
-        }
-        else if(speed < 0)  // 后退
-        {
-            front_right_set_speed(0, -speed);
-            front_left_set_speed(0, -speed);
-            rear_right_set_speed(0, -speed);
-            rear_left_set_speed(0, -speed);
-        }
-        else  // 停止
-        {
-            front_right_set_speed(1, 0);
-            front_left_set_speed(1, 0);
-            rear_right_set_speed(1, 0);
-            rear_left_set_speed(1, 0);
-        }
-    				
+
+        // 使用car_set_speed设置速度
+        car_set_speed(target_speed_val);
+
         // 舵机控制
         uint8_t front_angle, tall_angle;
-        
+
         // 中间死区
         if(rx > 120 && rx < 135)
         {
@@ -440,7 +380,7 @@ void ps2_proc(void)
             // 计算front_angle: 0-90度
             // rx从120到0，front_angle从90到0
             uint16_t front_angle_calc = 0;
-            
+
             if(rx < 20)  // 最小左转
             {
                 front_angle_calc = 0;  // 0度
@@ -451,10 +391,10 @@ void ps2_proc(void)
                 // 公式: front_angle = 0 + (rx-20) * 90 / 100
                 front_angle_calc = (rx - 20) * 90 / 100;
             }
-            
+
             front_angle = front_angle_calc;       // 90-0度
             tall_angle = 180 - front_angle_calc;  // 90-180度
-            
+
             // 限幅
             if(front_angle > 90) front_angle = 90;
             if(tall_angle < 90) tall_angle = 90;
@@ -465,7 +405,7 @@ void ps2_proc(void)
             // 计算front_angle: 90-180度
             // rx从135到255，front_angle从90到180
             uint16_t front_angle_calc = 0;
-            
+
             if(rx > 235)  // 最大右转
             {
                 front_angle_calc = 180;  // 180度
@@ -476,16 +416,16 @@ void ps2_proc(void)
                 // 公式: front_angle = 90 + (rx-135) * 90 / 100
                 front_angle_calc = 90 + (rx - 135) * 90 / 100;
             }
-            
+
             front_angle = front_angle_calc;  // 90-180度
             tall_angle = 180 - front_angle_calc;  // 90-0度
-            
+
             // 限幅
             if(front_angle < 90) front_angle = 90;
             if(front_angle > 180) front_angle = 180;
             if(tall_angle > 90) tall_angle = 90;
         }
-        
+
         servo_set(0, front_angle);  // 前舵机 dir=0
         servo_set(1, tall_angle);    // 后舵机 dir=1
 	}

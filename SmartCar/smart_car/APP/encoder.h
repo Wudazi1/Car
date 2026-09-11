@@ -19,6 +19,12 @@ int get_average_rpm(void);
 float rpm_to_speed_ms(int rpm);
 float get_robot_speed(void);
 
+// 各电机线速度(m/s)
+float encoder1_getspeed_ms(void);
+float encoder2_getspeed_ms(void);
+float encoder3_getspeed_ms(void);
+float encoder4_getspeed_ms(void);
+
 // 里程计算相关函数
 void update_motor1_odometer(void);
 void update_motor2_odometer(void);

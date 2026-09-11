@@ -445,3 +445,32 @@ uint32_t get_average_total_rev(void)
 
 	return sum / 2;
 }
+
+// ==================== 速度计算(m/s) ==================== //
+/**
+ * @brief: 获取电机1的线速度 (m/s)
+ */
+float encoder1_getspeed_ms(void) {
+    return rpm_to_speed_ms(encoder1_getrpm_smooth());
+}
+
+/**
+ * @brief: 获取电机2的线速度 (m/s)
+ */
+float encoder2_getspeed_ms(void) {
+    return rpm_to_speed_ms(encoder2_getrpm_smooth());
+}
+
+/**
+ * @brief: 获取电机3的线速度 (m/s)
+ */
+float encoder3_getspeed_ms(void) {
+    return rpm_to_speed_ms(encoder3_getrpm_smooth());
+}
+
+/**
+ * @brief: 获取电机4的线速度 (m/s)
+ */
+float encoder4_getspeed_ms(void) {
+    return rpm_to_speed_ms(encoder4_getrpm_smooth());
+}
