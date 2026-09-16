@@ -24,7 +24,4 @@
 #include "ws2812.h"
 #include "oled.h"
 
-
-#include "emotion.h"
-
 #endif

@@ -10,14 +10,14 @@
       <TargetName>smart_car</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\2.ARM_Compiler_5.06u7</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARM_Compiler_5.06u7</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103VG</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.1.0.5</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32F1xx_DFP.2.4.1</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x20017FFF) IROM(0x8000000-0x80FFFFF) CLOCK(8000000) CPUTYPE("Cortex-M3") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -1149,16 +1149,6 @@
           <GroupName>OLED_Driver</GroupName>
           <Files>
             <File>
-              <FileName>emotion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\OLED_Driver\emotion.c</FilePath>
-            </File>
-            <File>
-              <FileName>emotion.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\OLED_Driver\emotion.h</FilePath>
-            </File>
-            <File>
               <FileName>oled.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\OLED_Driver\oled.c</FilePath>
@@ -1172,6 +1162,16 @@
               <FileName>oledfont.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\OLED_Driver\oledfont.h</FilePath>
+            </File>
+            <File>
+              <FileName>lvgl_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\OLED_Driver\lvgl_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>lvgl_port.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\OLED_Driver\lvgl_port.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -2177,6 +2177,31 @@
               <FileName>lv_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\LVGL_Driver\lv_conf.h</FilePath>
+            </File>
+            <File>
+              <FileName>emotion_display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LVGL_App\emotion_display.c</FilePath>
+            </File>
+            <File>
+              <FileName>emotion_display.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\LVGL_App\emotion_display.h</FilePath>
+            </File>
+            <File>
+              <FileName>font_awesome_30_1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LVGL_App\font_awesome_30_1.c</FilePath>
+            </File>
+            <File>
+              <FileName>font_awesome_30_1.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\LVGL_App\font_awesome_30_1.h</FilePath>
+            </File>
+            <File>
+              <FileName>font_awesome_symbols.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\LVGL_App\font_awesome_symbols.h</FilePath>
             </File>
           </Files>
         </Group>

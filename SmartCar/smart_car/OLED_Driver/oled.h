@@ -8,6 +8,8 @@
 extern const uint8_t pic[];
 
 void OLED_Init(void);
+void OLED_WR_Data(uint8_t dat);
+void OLED_Set_Pos(uint8_t x, uint8_t y);
 void OLED_Clear(void);
 void OLED_ClearPage(uint8_t page);
 void OLED_ShowChar(uint8_t x, uint8_t y, uint8_t chr);
