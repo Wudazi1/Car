@@ -23,5 +23,7 @@
 #include "pid.h"
 #include "ws2812.h"
 #include "oled.h"
+#include "battery.h"
+#include "ntc.h"
 
 #endif

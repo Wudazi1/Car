@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "system_bsp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -206,13 +206,15 @@ void StartDefaultTask(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_key_proc */
-void start_key_proc(void *argument)
+__weak void start_key_proc(void *argument)
 {
   /* USER CODE BEGIN start_key_proc */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    key_proc();
+
+    vTaskDelay(pdMS_TO_TICKS(20)); 
   }
   /* USER CODE END start_key_proc */
 }
@@ -224,13 +226,15 @@ void start_key_proc(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_battery_proc */
-void start_battery_proc(void *argument)
+__weak void start_battery_proc(void *argument)
 {
   /* USER CODE BEGIN start_battery_proc */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    battery_proc();
+
+    vTaskDelay(pdMS_TO_TICKS(1000)); 
   }
   /* USER CODE END start_battery_proc */
 }
@@ -242,13 +246,15 @@ void start_battery_proc(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_temperature_proc */
-void start_temperature_proc(void *argument)
+__weak void start_temperature_proc(void *argument)
 {
   /* USER CODE BEGIN start_temperature_proc */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    temperature_proc();
+
+    vTaskDelay(pdMS_TO_TICKS(500));
   }
   /* USER CODE END start_temperature_proc */
 }
@@ -260,7 +266,7 @@ void start_temperature_proc(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_eeprom_proc */
-void start_eeprom_proc(void *argument)
+__weak void start_eeprom_proc(void *argument)
 {
   /* USER CODE BEGIN start_eeprom_proc */
   /* Infinite loop */
@@ -278,7 +284,7 @@ void start_eeprom_proc(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_mpu6050_proc */
-void start_mpu6050_proc(void *argument)
+__weak void start_mpu6050_proc(void *argument)
 {
   /* USER CODE BEGIN start_mpu6050_proc */
   /* Infinite loop */
@@ -296,7 +302,7 @@ void start_mpu6050_proc(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_pid_proc */
-void start_pid_proc(void *argument)
+__weak void start_pid_proc(void *argument)
 {
   /* USER CODE BEGIN start_pid_proc */
   /* Infinite loop */
@@ -314,7 +320,7 @@ void start_pid_proc(void *argument)
 * @retval None
 */
 /* USER CODE END Header_start_ws2812_proc */
-void start_ws2812_proc(void *argument)
+__weak void start_ws2812_proc(void *argument)
 {
   /* USER CODE BEGIN start_ws2812_proc */
   /* Infinite loop */

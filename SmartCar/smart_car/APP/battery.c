@@ -2,6 +2,9 @@
 #include "stdio.h"
 #include "oled.h"
 
+// 电池电压分压参数
+#define VOLTAGE_DIVIDER_RATIO 4.0f 
+
 // ADC 初始化
 void ADC_init(void)
 {
@@ -41,13 +44,9 @@ int battery_value = 0;
 float battery_voltage = 0.0f;
 char display_buf[16];
 
-void adc_proc(void)
+void battery_proc(void)
 {
 	// 获取电压
 	battery_value = getMiddleValue(&hadc1, 7);
-	battery_voltage = battery_value / 4095.0f * 3.3f * 4;
-	
-	// 显示电压
-	sprintf(display_buf, "Bat:%.1fV", battery_voltage);
-	OLED_ShowString(0,1, display_buf);
+	battery_voltage = battery_value / 4095.0f * 3.3f * VOLTAGE_DIVIDER_RATIO;
 }

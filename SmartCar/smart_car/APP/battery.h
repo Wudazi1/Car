@@ -6,5 +6,5 @@
 #include "gpio.h"
 
 void ADC_init(void);
-void adc_proc(void);
+void battery_proc(void);
 #endif
