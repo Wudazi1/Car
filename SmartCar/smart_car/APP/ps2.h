@@ -13,9 +13,9 @@
 #define PS2_Delay_US(us)   HAL_Delay_us(us)  // 需要实现微秒延时
 
 // PS2手柄模式定义
-#define PSB_LOSE                   0       // 连接丢失
-#define PSB_GREENLIGHT_MODE        1       // 绿灯模式（模拟摇杆模式）
-#define PSB_REDLIGHT_MODE          2       // 红灯模式（数字模式）
+#define PSB_LOSE                0       // 连接丢失
+#define PSB_ANALOG_MODE         1       // 绿灯模式（模拟摇杆模式）
+#define PSB_DIGITAL_MODE        2       // 红灯模式（数字模式）
 
 
 // PS2手柄按键ID定义
@@ -73,7 +73,6 @@ void PS2_TurnOnAnalogMode(void);                         // 开启模拟模式
 void PS2_ExitConfing(void);                              // 退出配置模式
 void PS2_Delay_US(uint32_t us);                          // 微秒延时函数
 uint8_t PS2_SPI_ReadWriteByte(uint8_t TxData);           // SPI收发单个字节
-void PS2_Hardware_Debug(void);                           // 硬件SPI通信测试
 void ps2_proc(void);                                     // PS2任务函数
 
 #endif

@@ -141,11 +141,11 @@ unsigned char ps2_mode_get(void)
 {   
     if(Data[1] == 0x73)  
     {
-        ps2_mode = PSB_GREENLIGHT_MODE;
+        ps2_mode = PSB_ANALOG_MODE;
     }
     else if (Data[1] == 0x41)
     {
-        ps2_mode = PSB_REDLIGHT_MODE;
+        ps2_mode = PSB_DIGITAL_MODE;
     }
     else
     {
@@ -155,29 +155,31 @@ unsigned char ps2_mode_get(void)
 }
 
 // 按键扫描处理
+// 返回第一个被按下的按键ID（用于switch），如果没有按键按下返回0
 unsigned char ps2_key_serch(void)
 {
     unsigned char index;
-    unsigned char key_num = 0;
-    
+    unsigned char first_key = 0;    // 第一个按下的键
+
     PS2_ReadData();
-    
-    // 组合按键数据
     Handkey = (Data[4] << 8) | Data[3];
-    
+
+    /* 第一步：完整更新所有键的状态 */
     for(index = 0; index < 16; index++)
-    {       
+    {
         if((Handkey & (1 << (MASK[index][0] - 1))) == 0)
         {
-            MASK[index][1] = 1;    // 按下
-            key_num++;
+            MASK[index][1] = 1;             // 按下
+            if(first_key == 0)              // 记录第一个按下的
+                first_key = MASK[index][0];
         }
         else
         {
-            MASK[index][1] = 0;    // 释放
+            MASK[index][1] = 0;             // 松开
         }
     }
-    return key_num;
+    
+    return first_key;    // 返回第一个按下的键 ID（0 = 无按键）
 }
 
 // 获取指定按键状态
@@ -282,68 +284,8 @@ void PS2_ExitConfing(void)
     DWT_Delay_us(100);
 }
 
-// 硬件SPI通信测试函数
-void PS2_Hardware_Debug(void)
-{   
-    while(1)
-    {
-        // 读取手柄数据
-        uint8_t key_count = ps2_key_serch();
-        
-        // 获取模式
-        ps2_mode_get(); 
-        if(ps2_mode == PSB_GREENLIGHT_MODE) 
-        {
-            // 显示摇杆数据
-            uint8_t lx = Data[PSS_LX];
-            uint8_t ly = Data[PSS_LY];
-            uint8_t rx = Data[PSS_RX];
-            uint8_t ry = Data[PSS_RY];
-            
-            printf("Mode=Analog LX=%-3d LY=%-3d RX=%-3d RY=%-3d Button Press:", lx, ly, rx, ry);                   
-        }
-        else if(ps2_mode == PSB_REDLIGHT_MODE)
-        {
-            // 显示按钮状态
-            printf("Mode=Digital Button Press:");
-        }
-        
-        // 实时响应
-        if(key_count > 0)
-        {
-            if(ps2_get_key_state(PSB_SELECT))    printf("SELECT");
-            if(ps2_get_key_state(PSB_START))     printf("START");
-            if(ps2_get_key_state(PSB_PAD_UP))    printf("UP");
-            if(ps2_get_key_state(PSB_PAD_RIGHT)) printf("RIGHT");
-            if(ps2_get_key_state(PSB_PAD_DOWN))  printf("DOWN");
-            if(ps2_get_key_state(PSB_PAD_LEFT))  printf("LEFT");
-            if(ps2_get_key_state(PSB_L1))        printf("L1");
-            if(ps2_get_key_state(PSB_R1))        printf("R1");
-            if(ps2_get_key_state(PSB_L2))        printf("L2");
-            if(ps2_get_key_state(PSB_R2))        printf("R2");
-            if(ps2_get_key_state(PSB_TRIANGLE))  printf("TRI");
-            if(ps2_get_key_state(PSB_CIRCLE))    printf("CIR");
-            if(ps2_get_key_state(PSB_CROSS))     printf("CRO");
-            if(ps2_get_key_state(PSB_SQUARE))    printf("SQR");
-            
-        }
-        else printf("No Button Press"); 
-
-        printf("\r\n");
-        HAL_Delay(10);
-    }
-}
-
-// ps2任务函数
-void ps2_proc(void)
+void ps2_remote_control(void)
 {
-    // 读取手柄数据
-    uint8_t key_count = ps2_key_serch();
-	
-    // 获取模式
-    ps2_mode_get(); 
-    if(ps2_mode == PSB_GREENLIGHT_MODE) // 模拟模式
-    {
         // 获取摇杆数据
         uint8_t ly = Data[PSS_LY]; // 用于前进后退 0到255 中间值为127
         uint8_t rx = Data[PSS_RX]; // 用于舵机转向 0到255 中间值为128
@@ -365,8 +307,8 @@ void ps2_proc(void)
         // 使用car_set_speed设置速度
         car_set_speed(target_speed_val);
 
-        // 舵机控制
-        uint8_t front_angle, tall_angle;
+        // ==================舵机控制================== // 
+        uint8_t front_angle = 90, tall_angle = 90; // 默认居中
 
         // 中间死区
         if(rx > 120 && rx < 135)
@@ -428,5 +370,38 @@ void ps2_proc(void)
 
         servo_set(0, front_angle);  // 前舵机 dir=0
         servo_set(1, tall_angle);    // 后舵机 dir=1
+}
+
+// ps2任务函数
+void ps2_proc(void)
+{
+    static uint8_t last_key = 0;
+    // 读取手柄数据
+    uint8_t key_id = ps2_key_serch();
+	
+    // 获取模式
+    ps2_mode_get();
+    
+    if(ps2_mode == PSB_ANALOG_MODE) // 模拟模式
+    {
+        ps2_remote_control();
 	}
+    
+    if(key_id !=0 && key_id != last_key)
+    {
+        switch(key_id)
+        {
+            case PSB_PAD_UP:
+                break;
+            case PSB_PAD_DOWN:
+                break;
+            case PSB_PAD_LEFT:
+                break;
+            case PSB_PAD_RIGHT:
+                break;
+            default:
+                break;
+        }        
+    }
+    last_key = key_id;
 }

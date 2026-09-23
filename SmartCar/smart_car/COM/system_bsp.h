@@ -27,5 +27,6 @@
 #include "ntc.h"
 #include "eeprom.h"
 #include "mpu6050.h"
+#include "ps2.h"
 
 #endif

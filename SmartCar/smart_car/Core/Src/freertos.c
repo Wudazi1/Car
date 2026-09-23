@@ -103,6 +103,20 @@ const osThreadAttr_t ws2812_proc_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityRealtime,
 };
+/* Definitions for ps2_proc */
+osThreadId_t ps2_procHandle;
+const osThreadAttr_t ps2_proc_attributes = {
+  .name = "ps2_proc",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for oled_proc */
+osThreadId_t oled_procHandle;
+const osThreadAttr_t oled_proc_attributes = {
+  .name = "oled_proc",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -117,6 +131,8 @@ void start_eeprom_proc(void *argument);
 void start_mpu6050_proc(void *argument);
 void start_pid_proc(void *argument);
 void start_ws2812_proc(void *argument);
+void start_ps2_proc(void *argument);
+void start_oled_proc(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -170,6 +186,12 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of ws2812_proc */
   ws2812_procHandle = osThreadNew(start_ws2812_proc, NULL, &ws2812_proc_attributes);
+
+  /* creation of ps2_proc */
+  ps2_procHandle = osThreadNew(start_ps2_proc, NULL, &ps2_proc_attributes);
+
+  /* creation of oled_proc */
+  oled_procHandle = osThreadNew(start_oled_proc, NULL, &oled_proc_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -338,6 +360,44 @@ __weak void start_ws2812_proc(void *argument)
     osDelay(1);
   }
   /* USER CODE END start_ws2812_proc */
+}
+
+/* USER CODE BEGIN Header_start_ps2_proc */
+/**
+* @brief Function implementing the ps2_proc thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_start_ps2_proc */
+__weak void start_ps2_proc(void *argument)
+{
+  /* USER CODE BEGIN start_ps2_proc */
+  /* Infinite loop */
+  for(;;)
+  {
+    ps2_proc();
+
+    vTaskDelay(pdMS_TO_TICKS(20));
+  }
+  /* USER CODE END start_ps2_proc */
+}
+
+/* USER CODE BEGIN Header_start_oled_proc */
+/**
+* @brief Function implementing the oled_proc thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_start_oled_proc */
+__weak void start_oled_proc(void *argument)
+{
+  /* USER CODE BEGIN start_oled_proc */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END start_oled_proc */
 }
 
 /* Private application code --------------------------------------------------*/
