@@ -8,6 +8,7 @@ extern SPI_HandleTypeDef hspi2;
 // 全局变量
 unsigned int Handkey;   // 按键值读取，临时存储
 uint8_t ps2_mode;       // 手柄模式
+float target_speed_val = 0.0f;
 
 // 发送命令数组
 uint8_t Comd[9] = {0x01, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -292,7 +293,6 @@ void ps2_remote_control(void)
 
         // 电机控制：ly直接映射为速度m/s
         // ly范围0-255，127是中间值停止
-        float target_speed_val = 0.0f;
 
         if(ly < 127) {
             // 前进：ly从127→0对应0→1.2 m/s
@@ -303,9 +303,6 @@ void ps2_remote_control(void)
         } else {
             target_speed_val = 0.0f;
         }
-
-        // 使用car_set_speed设置速度
-        car_set_speed(target_speed_val);
 
         // ==================舵机控制================== // 
         uint8_t front_angle = 90, tall_angle = 90; // 默认居中
@@ -404,4 +401,12 @@ void ps2_proc(void)
         }        
     }
     last_key = key_id;
+    
+    if(ps2_get_key_state(PSB_R1))
+    {
+        target_speed_val = 0.0f;
+    }
+    
+    // 使用car_set_speed设置速度
+    car_set_speed(target_speed_val);
 }

@@ -96,13 +96,6 @@ const osThreadAttr_t pid_proc_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityRealtime6,
 };
-/* Definitions for ws2812_proc */
-osThreadId_t ws2812_procHandle;
-const osThreadAttr_t ws2812_proc_attributes = {
-  .name = "ws2812_proc",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityRealtime,
-};
 /* Definitions for ps2_proc */
 osThreadId_t ps2_procHandle;
 const osThreadAttr_t ps2_proc_attributes = {
@@ -130,7 +123,6 @@ void start_temperature_proc(void *argument);
 void start_eeprom_proc(void *argument);
 void start_mpu6050_proc(void *argument);
 void start_pid_proc(void *argument);
-void start_ws2812_proc(void *argument);
 void start_ps2_proc(void *argument);
 void start_oled_proc(void *argument);
 
@@ -183,9 +175,6 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of pid_proc */
   pid_procHandle = osThreadNew(start_pid_proc, NULL, &pid_proc_attributes);
-
-  /* creation of ws2812_proc */
-  ws2812_procHandle = osThreadNew(start_ws2812_proc, NULL, &ws2812_proc_attributes);
 
   /* creation of ps2_proc */
   ps2_procHandle = osThreadNew(start_ps2_proc, NULL, &ps2_proc_attributes);
@@ -342,24 +331,6 @@ __weak void start_pid_proc(void *argument)
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
   }
   /* USER CODE END start_pid_proc */
-}
-
-/* USER CODE BEGIN Header_start_ws2812_proc */
-/**
-* @brief Function implementing the ws2812_proc thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_start_ws2812_proc */
-__weak void start_ws2812_proc(void *argument)
-{
-  /* USER CODE BEGIN start_ws2812_proc */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END start_ws2812_proc */
 }
 
 /* USER CODE BEGIN Header_start_ps2_proc */
