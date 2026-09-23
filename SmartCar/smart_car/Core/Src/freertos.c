@@ -272,7 +272,9 @@ __weak void start_eeprom_proc(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    eeprom_proc();
+
+    vTaskDelay(pdMS_TO_TICKS(1000));
   }
   /* USER CODE END start_eeprom_proc */
 }
@@ -290,7 +292,9 @@ __weak void start_mpu6050_proc(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    mpu6050_proc();
+
+    vTaskDelay(pdMS_TO_TICKS(30)); 
   }
   /* USER CODE END start_mpu6050_proc */
 }
@@ -305,10 +309,15 @@ __weak void start_mpu6050_proc(void *argument)
 __weak void start_pid_proc(void *argument)
 {
   /* USER CODE BEGIN start_pid_proc */
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = pdMS_TO_TICKS(10);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    pid_proc();
+
+    // 绝对延时
+    vTaskDelayUntil(&xLastWakeTime, xFrequency);
   }
   /* USER CODE END start_pid_proc */
 }

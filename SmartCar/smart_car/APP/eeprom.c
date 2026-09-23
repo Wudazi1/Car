@@ -39,3 +39,41 @@ uint8_t EEPROM_ReadByte(uint16_t addr)
     
     return data;
 }
+
+void EEPROM_SaveOdometer(float odometer)
+{
+	// 将float转换为4个字节存储
+	uint8_t *bytes = (uint8_t *)&odometer;
+
+	// 写入4个字节到EEPROM
+	EEPROM_WriteByte(EEPROM_ODOMETER_ADDR, bytes[0]);
+	EEPROM_WriteByte(EEPROM_ODOMETER_ADDR + 1, bytes[1]);
+	EEPROM_WriteByte(EEPROM_ODOMETER_ADDR + 2, bytes[2]);
+	EEPROM_WriteByte(EEPROM_ODOMETER_ADDR + 3, bytes[3]);
+}
+
+float EEPROM_LoadOdometer(void)
+{
+	float odometer = 0.0f;
+	uint8_t *bytes = (uint8_t *)&odometer;
+
+	// 从EEPROM读取4个字节
+	bytes[0] = EEPROM_ReadByte(EEPROM_ODOMETER_ADDR);
+	bytes[1] = EEPROM_ReadByte(EEPROM_ODOMETER_ADDR + 1);
+	bytes[2] = EEPROM_ReadByte(EEPROM_ODOMETER_ADDR + 2);
+	bytes[3] = EEPROM_ReadByte(EEPROM_ODOMETER_ADDR + 3);
+
+	return odometer;
+}
+
+void eeprom_proc(void)
+{
+	static float last_odometer = 0.0f;
+	float current_odometer = get_robot_odometer();
+
+	if(fabs(current_odometer - last_odometer) > 0.1f)
+	{
+		EEPROM_SaveOdometer(current_odometer);
+		last_odometer = current_odometer;
+	}
+}

@@ -32,5 +32,6 @@ void update_motor3_odometer(void);
 void update_motor4_odometer(void);
 void update_all_odometer(void);
 uint32_t get_average_total_rev(void);
+float get_robot_odometer(void);
 
 #endif

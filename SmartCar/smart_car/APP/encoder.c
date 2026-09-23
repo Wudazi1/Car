@@ -474,3 +474,31 @@ float encoder3_getspeed_ms(void) {
 float encoder4_getspeed_ms(void) {
     return rpm_to_speed_ms(encoder4_getrpm_smooth());
 }
+
+/**
+ * @brief: 将转数转换为里程（米）
+ * @param: total_rev - 总转数
+ * @retval: 里程（米）
+ */
+float rev_to_distance(uint32_t total_rev)
+{
+	// 轮子周长（米）
+	float wheel_circumference = (WHEEL_DIAMETER_MM / 1000.0f) * PI;
+
+	// 总距离 = 转数 × 周长
+	float distance = (float)total_rev * wheel_circumference;
+
+	return distance;
+}
+
+/**
+ * @brief: 获取机器人当前总里程（米）
+ * @param: 无
+ * @retval: 总里程（米）
+ */
+float get_robot_odometer(void)
+{
+	uint32_t average_rev = get_average_total_rev();
+	
+	return rev_to_distance(average_rev);
+}

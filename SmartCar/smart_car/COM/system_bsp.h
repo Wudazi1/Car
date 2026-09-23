@@ -25,5 +25,7 @@
 #include "oled.h"
 #include "battery.h"
 #include "ntc.h"
+#include "eeprom.h"
+#include "mpu6050.h"
 
 #endif
