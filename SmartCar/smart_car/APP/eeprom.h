@@ -13,7 +13,8 @@ void EEPROM_SaveOdometer(float odometer);
 float EEPROM_LoadOdometer(void);
 void eeprom_proc(void);
 
-#define EEPROM_ODOMETER_ADDR    0x00    // 里程存储首地址
+#define EEPROM_ODOMETER_ADDR                0x00    // 里程存储首地址
+#define EEPROM_FOUR_WHEEL_STEER_ENABLE      0x04    // 四轮转向使能      
 
 
 #endif

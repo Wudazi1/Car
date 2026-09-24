@@ -9,6 +9,7 @@ extern SPI_HandleTypeDef hspi2;
 unsigned int Handkey;   // 按键值读取，临时存储
 uint8_t ps2_mode;       // 手柄模式
 float target_speed_val = 0.0f;
+uint8_t fws;  // 四轮转向使能标志
 
 // 发送命令数组
 uint8_t Comd[9] = {0x01, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -102,6 +103,9 @@ void PS2_Init(void)
     {
         printf("PS2 Hardware SPI Initialization Failed!\r\n");
     }
+    
+    // 6. 从EEPROM读取四轮转向状态
+    fws = EEPROM_ReadByte(EEPROM_FOUR_WHEEL_STEER_ENABLE);
 }
 
 // 读取手柄数据
@@ -366,7 +370,7 @@ void ps2_remote_control(void)
         }
 
         servo_set(0, front_angle);  // 前舵机 dir=0
-        servo_set(1, tall_angle);    // 后舵机 dir=1
+        if(EEPROM_ReadByte(EEPROM_FOUR_WHEEL_STEER_ENABLE)) servo_set(1, tall_angle);    // 后舵机 dir=1
 }
 
 // ps2任务函数
@@ -395,6 +399,10 @@ void ps2_proc(void)
             case PSB_PAD_LEFT:
                 break;
             case PSB_PAD_RIGHT:
+                break;
+            case PSB_BLUE:
+                fws = !fws;  // 先翻转变量
+                EEPROM_WriteByte(EEPROM_FOUR_WHEEL_STEER_ENABLE, fws);  // 再保存到EEPROM
                 break;
             default:
                 break;
