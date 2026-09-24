@@ -10,6 +10,8 @@ unsigned int Handkey;   // 按键值读取，临时存储
 uint8_t ps2_mode;       // 手柄模式
 float target_speed_val = 0.0f;
 uint8_t fws;  // 四轮转向使能标志
+uint8_t gear_level = 0;  // 当前档位（0-2档）
+static const float gear_speeds[] = {0.4f, 0.8f, 1.2f};  // 0-3档速度
 
 // 发送命令数组
 uint8_t Comd[9] = {0x01, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -295,15 +297,17 @@ void ps2_remote_control(void)
         uint8_t ly = Data[PSS_LY]; // 用于前进后退 0到255 中间值为127
         uint8_t rx = Data[PSS_RX]; // 用于舵机转向 0到255 中间值为128
 
-        // 电机控制：ly直接映射为速度m/s
+        // 电机控制：根据档位计算速度
         // ly范围0-255，127是中间值停止
 
+        float max_speed = gear_speeds[gear_level];  // 根据档位获取最高速度
+
         if(ly < 127) {
-            // 前进：ly从127→0对应0→1.2 m/s
-            target_speed_val = (127 - ly) / 127.0f * 1.2f;
+            // 前进：ly从127→0对应0→max_speed m/s
+            target_speed_val = (127 - ly) / 127.0f * max_speed;
         } else if(ly > 127) {
-            // 后退：ly从127→255对应0→-1.2 m/s
-            target_speed_val = (127 - ly) / 127.0f * 1.2f;
+            // 后退：ly从127→255对应0→-max_speed m/s
+            target_speed_val = (127 - ly) / 127.0f * max_speed;
         } else {
             target_speed_val = 0.0f;
         }
@@ -392,17 +396,19 @@ void ps2_proc(void)
     {
         switch(key_id)
         {
-            case PSB_PAD_UP:
+            case PSB_PAD_UP:    // 增加最大速度
+                if(gear_level < 2) gear_level++;
                 break;
-            case PSB_PAD_DOWN:
+            case PSB_PAD_DOWN:  // 减小最大速度
+                if(gear_level > 0) gear_level--;
                 break;
             case PSB_PAD_LEFT:
                 break;
             case PSB_PAD_RIGHT:
                 break;
-            case PSB_BLUE:
-                fws = !fws;  // 先翻转变量
-                EEPROM_WriteByte(EEPROM_FOUR_WHEEL_STEER_ENABLE, fws);  // 再保存到EEPROM
+            case PSB_BLUE:      // 四轮转向使能
+                fws = !fws;
+                EEPROM_WriteByte(EEPROM_FOUR_WHEEL_STEER_ENABLE, fws);
                 break;
             default:
                 break;
